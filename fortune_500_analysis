@@ -1,0 +1,29 @@
+# First to look over the data 
+SELECT* 
+FROM fortune_companies
+
+# FInding the averages of tenure among all the companies
+SELECT AVG(avg_employee_tenure)
+FROM fortune_companies
+
+
+# Grouping data by using case into "Longe Tenure", "Average Tenure", "Below Average Tenure", and "Low Tenure"
+SELECT company_name, 
+CASE WHEN avg_employee_tenure >= 6.5 THEN "Long tenure"
+WHEN avg_employee_tenure >= 5.5 THEN "Average tenure"
+WHEN avg_employee_tenure >= 4 THEN "Below Average tenure"
+ELSE "Tenure low" END "Company Tenure"
+FROM fortune_companies 
+GROUP BY avg_employee_tenure;
+
+# Companies with an average revenue over 100 billion
+SELECT company_name, avg(revenue) AS tech_avg_revenue, industry
+FROM fortune_companies
+GROUP BY industry
+HAVING tech_avg_revenue >= 100
+
+
+SELECT industry, ROUND(avg(employees)) AS avg_employees
+FROM fortune_companies
+WHERE avg_employees > 30000 
+GROUP BY industry
