@@ -1,0 +1,73 @@
+# For this project, I downloaded Spotify data from Kaggle.
+# Then I created a table to insert Spotify data into.
+# Finally, I performed analytics on the data using SQL. 
+
+#Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+#Then I inserted the Spotify Data .csv into the table.
+
+#Next, I explored the data using the following SQL. 
+
+#First I explored the data, examining the coloumns and rows. 
+SELECT *
+FROM BIT_DB.Spotifydata;
+
+#I then asked some questions about the data and wrote SQL to get the anwsers from the data. 
+
+-- 1. What is the average danceability by artist
+SELECT artist_name, avg(danceability)
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY danceability DESC;
+
+-- 2. Who are the top 10 artists based on popularity?
+SELECT artist_name, sum(popularity) 
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY sum(popularity) DESC
+LIMIT 10;
+
+-- 3. What artists have the most top 50 songs 
+SELECT artist_name, COUNT(*) as appearance_count
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY appearance_count DESC
+LIMIT 3;
+
+-- 4. What artist released the longest song?
+SELECT artist_name, MAX(duration_ms)
+FROM BIT_DB.Spotifydata
+GROUP BY duration_ms
+ORDER BY duration_ms DESC
+LIMIT 1;
+
+-- 5. List the top 10 artists in terms of average popularity and label them as Top Star.
+WITH popularity_average_CTE AS
+(
+    SELECT  s.artist_name, avg(s.popularity) avg_popularity
+    FROM Spotifydata s
+    GROUP BY s.artist_name
+)
+SELECT artist_name, avg_popularity,  'Top Star' AS tag
+FROM popularity_average_CTE
+WHERE avg_popularity >= 90;
