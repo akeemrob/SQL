@@ -1,0 +1,51 @@
+# Using a database of 11 tables, I created SQL queries to answer the questions. 
+
+-- 1. Show Customers (their full names, customer ID, and country) who are not in the US.
+SELECT CustomerId, FirstName, LastName, Country
+FROM chinook.customers
+WHERE Country != 'USA';
+
+-- 2. List all invoices from France with the customerID as well as the customer's Full name. 
+SELECT i.InvoiceId, i.BillingCountry, c.FirstName, c.LastName, c.CustomerId
+FROM chinook.invoices i
+LEFT INNER JOIN chinook.customers c
+on i.CustomerId = c.CustomerId
+WHERE i.BillingCountry = 'France';
+
+-- 3. Show the Employees who work in IT along with their phone number and email.
+SELECT EmployeeId, LastName, FirstName, Title, Phone, Email
+FROM chinook.employees
+WHERE Title LIKE '%IT%'
+ORDER BY Title;
+
+-- 4. How many Invoices were there in 2009?
+SELECT  Count (*) invoiceId 
+FROM chinook.invoices
+WHERE InvoiceDate LIKE '%2009%';
+
+-- 5. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre
+SELECT t.trackId, t.Name, a.Title, t.MediaTypeId, t.GenreId
+FROM chinook.tracks t
+LEFT INNER JOIN chinook.albums a
+ON t.AlbumId = a.AlbumId
+ORDER BY a.Title;
+
+-- 6. What are the total sales for 2009?
+SELECT SUM(Total) AS Total_sales
+FROM chinook.invoices
+WHERE InvoiceDate LIKE '%2009%';
+
+-- 7. Find a unique/distinct list of billing countries from the Invoice table.
+SELECT DISTINCT BillingCountry
+FROM chinook.invoices
+GROUP BY BillingCountry;
+
+-- 8. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+SELECT ROUND(SUM(i.Total),2) AS Total_Revenue, cust.FirstName, cust.LastName, i.BillingCountry, emp.Title, emp.LastName, emp.FirstName
+FROM chinook.invoices i
+LEFT INNER JOIN chinook.customers cust
+ON i.CustomerId = cust.CustomerId
+LEFT INNER JOIN chinook.employees emp
+ON cust.SupportRepid = emp.EmployeeId
+GROUP BY i.Total
+ORDER BY cust.LastName;
